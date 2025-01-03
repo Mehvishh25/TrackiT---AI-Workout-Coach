@@ -60,7 +60,7 @@ def app():
             <ul style="font-size: 16px; color: #666;">
                 <li>Face left or right to the camera, ensuring the camera can capture your movement clearly.</li>
                 <li>Start the virtual coach to begin counting your reps.</li>
-                <li>Perform the exercise.</li>
+                <li>Perform the exercise!</li>
                 <li>Maintain a neutral neck position.</li>
             </ul>
             <p style="font-size: 14px; color: #666;">You can start real-time tracking by facing the camera.</p>

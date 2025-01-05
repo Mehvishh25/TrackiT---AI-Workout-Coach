@@ -239,7 +239,8 @@ class VideoProcessor:
                                     self.message_shown14 = True
                                     self.feedback_shown_time = time.time()
                             if time.time() - self.wait_start_time >= 30:
-                                continue              
+                                continue  
+                                        
                         self.dir = 0  # Reset the system for the next action
                         self.message_shown = False
                         self.message_shown1 = False

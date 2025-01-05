@@ -59,6 +59,52 @@ class VideoProcessor:
                 tolerance = 0.05
 
                 if nose.x < midline_x - tolerance:
+                    direction = "Facing Right"
+                    if len(lmList) != 0:
+                        angle1 = self.detector.findAngle(frame, 24, 26, 28)
+                        angle2 = self.detector.findAngle(frame, 23, 25, 27)
+
+                        per1 = np.interp(angle1, (180, 290), (0, 100))
+                        per2 = np.interp(angle2, (190, 300), (0, 100))
+
+                        if 95 <= per1 <= 100 and 95 <= per2 <= 100 and self.dir == 0:
+                            self.count += 0.5
+                            self.dir = 1
+
+                            if angle1 > 290:
+                                if not self.message_shown1 or (time.time() - self.feedback_shown_time > 2):
+                                    self.speak_message('The front knee should bend less')
+                                    self.message_shown1 = True
+                                    self.feedback_shown_time = time.time()
+
+                            if angle1 < 280:
+                                if not self.message_shown2 or (time.time() - self.feedback_shown_time > 2):
+                                    self.speak_message('The front knee should bend more')
+                                    self.message_shown2 = True
+                                    self.feedback_shown_time = time.time()
+
+                            if angle2 > 300:
+                                if not self.message_shown3 or (time.time() - self.feedback_shown_time > 2):
+                                    self.speak_message('The back knee should bend less')
+                                    self.message_shown3 = True
+                                    self.feedback_shown_time = time.time()
+
+                            if angle2 < 290:
+                                if not self.message_shown4 or (time.time() - self.feedback_shown_time > 2):
+                                    self.speak_message('The back knee should bend more')
+                                    self.message_shown4 = True
+                                    self.feedback_shown_time = time.time()
+
+                        if 0 <= per1 <= 7 and 0 <= per2 <= 7 and self.dir == 1:
+                            self.count += 0.5
+                            self.dir = 0
+                            self.message_shown1 = False
+                            self.message_shown2 = False
+                            self.message_shown3 = False
+                            self.message_shown4 = False
+                            self.feedback_shown_time = 0
+
+                elif nose.x > midline_x + tolerance:
                     direction = "Facing Left"
                     if len(lmList) != 0:
                         angle1 = self.detector.findAngle(frame, 23, 25, 27)
@@ -107,47 +153,11 @@ class VideoProcessor:
                         if 0 <= per1 <= 7 and 0 <= per2 <= 7 and self.dir == 1:
                             self.count += 0.5
                             self.dir = 0
-
-                elif nose.x > midline_x + tolerance:
-                    direction = "Facing Right"
-                    if len(lmList) != 0:
-                        angle1 = self.detector.findAngle(frame, 24, 26, 28)
-                        angle2 = self.detector.findAngle(frame, 23, 25, 27)
-
-                        per1 = np.interp(angle1, (180, 290), (0, 100))
-                        per2 = np.interp(angle2, (190, 300), (0, 100))
-
-                        if 95 <= per1 <= 100 and 95 <= per2 <= 100 and self.dir == 0:
-                            self.count += 0.5
-                            self.dir = 1
-
-                            if angle1 > 290:
-                                if not self.message_shown1 or (time.time() - self.feedback_shown_time > 2):
-                                    self.speak_message('The front knee should bend less')
-                                    self.message_shown1 = True
-                                    self.feedback_shown_time = time.time()
-
-                            if angle1 < 280:
-                                if not self.message_shown2 or (time.time() - self.feedback_shown_time > 2):
-                                    self.speak_message('The front knee should bend more')
-                                    self.message_shown2 = True
-                                    self.feedback_shown_time = time.time()
-
-                            if angle2 > 300:
-                                if not self.message_shown3 or (time.time() - self.feedback_shown_time > 2):
-                                    self.speak_message('The back knee should bend less')
-                                    self.message_shown3 = True
-                                    self.feedback_shown_time = time.time()
-
-                            if angle2 < 290:
-                                if not self.message_shown4 or (time.time() - self.feedback_shown_time > 2):
-                                    self.speak_message('The back knee should bend more')
-                                    self.message_shown4 = True
-                                    self.feedback_shown_time = time.time()
-
-                        if 0 <= per1 <= 7 and 0 <= per2 <= 7 and self.dir == 1:
-                            self.count += 0.5
-                            self.dir = 0
+                            self.message_shown5 = False
+                            self.message_shown6 = False
+                            self.message_shown7 = False
+                            self.message_shown8 = False
+                            self.feedback_shown_time = 0
 
                 else:
                     midline_y = (left_shoulder.y + right_shoulder.y) / 2

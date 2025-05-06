@@ -5,7 +5,7 @@ def app():
     st.title("🤖 Fitness Chatbot")
 
     # Configure Gemini API
-    genai.configure(api_key="AIzaSyBb0yOnYLBoicKe8SEajKCeMxqqAzneyzI") 
+    genai.configure(api_key="api-key") 
     model = genai.GenerativeModel('gemini-1.5-flash')
 
     # Initialize chat history

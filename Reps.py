@@ -1,5 +1,5 @@
 import streamlit as st
-import Reps_backend2
+import Reps_backend
 
 def app():
     st.markdown(
@@ -97,11 +97,11 @@ def app():
     # Update session state based on button clicks
     if start_coach_button:
         st.session_state.start_coach = True
-        Reps_backend2.process_video()
+        Reps_backend.process_video()
 
     if stop_coach_button:
         st.session_state.start_coach = False
-        Reps_backend2.stop_video()
+        Reps_backend.stop_video()
 
 if __name__== "_main":
     app()

@@ -5,6 +5,7 @@ import Pose_module as pm
 import pyttsx3
 import numpy as np
 import streamlit as st
+import threading
 
 class VideoProcessor:
     def __init__(self):

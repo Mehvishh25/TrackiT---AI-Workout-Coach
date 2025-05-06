@@ -4,6 +4,7 @@ import mediapipe as mp
 import time
 import Pose_module as pm
 import streamlit as st
+import threading
 
 class VideoProcessor:
     def __init__(self):

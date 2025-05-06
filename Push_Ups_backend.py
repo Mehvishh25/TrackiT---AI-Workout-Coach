@@ -5,6 +5,7 @@ import time
 import Pose_module as pm
 import pyttsx3
 import streamlit as st
+import threading
 
 class VideoProcessor:
     def __init__(self):
@@ -19,11 +20,17 @@ class VideoProcessor:
         self.message_shown2 = False
         self.pTime = 0
 
+
     def speak_message(self, message):
-        engine = pyttsx3.init()  # Initialize engine within the function
-        engine.say(message)
-        engine.runAndWait()
-        engine.stop()  # Stop the engine after speaking
+        # Run the speech in a separate thread
+        def _speak():
+            engine = pyttsx3.init()  # Initialize engine within the function
+            engine.say(message)
+            engine.runAndWait()
+            engine.stop()  # Stop the engine after speaking
+
+        # Start the thread and allow it to run in the background
+        threading.Thread(target=_speak, daemon=True).start()
 
     def start_processing(self):
         self.cap = cv2.VideoCapture('videos/pushups2.mp4')

@@ -5,6 +5,7 @@ import Pose_module as pm
 import pyttsx3
 import numpy as np
 import streamlit as st
+import threading
 
 class VideoProcessor:
     def __init__(self):
@@ -31,8 +32,10 @@ class VideoProcessor:
         self.engine.setProperty('volume', 1)
 
     def speak_message(self, message):
-        self.engine.say(message)
-        self.engine.runAndWait()
+        def run():
+            self.engine.say(message)
+            self.engine.runAndWait()
+        threading.Thread(target=run).start()
 
     def start_processing(self):
         self.cap = cv2.VideoCapture("videos/reverse_lunges_2.mp4")

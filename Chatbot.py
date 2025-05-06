@@ -1,69 +1,41 @@
 import streamlit as st
 import google.generativeai as genai
-from google.oauth2 import service_account
-import os
-
-# Get the absolute path of the credentials file
-GOOGLE_CREDENTIALS_PATH = os.path.join(os.getcwd(), "verdict.json")
-
-# Ensure the file exists before using it
-if not os.path.exists(GOOGLE_CREDENTIALS_PATH):
-    raise FileNotFoundError(f"Credentials file not found at: {GOOGLE_CREDENTIALS_PATH}")
-
-# Set the environment variable for Google credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_CREDENTIALS_PATH
-
-# Load the credentials from the JSON file
-credentials = service_account.Credentials.from_service_account_file(GOOGLE_CREDENTIALS_PATH)
-
-# Configure the Gemini API using the credentials
-def initialize_genai():
-    """Initialize the Gemini API."""
-    genai.configure(credentials=credentials)
-    return genai
-
-def call_gemini_api(message):
-    """
-    Function to interact with the Gemini API.
-    
-    Args:
-        message (str): The input message for the chatbot
-    
-    Returns:
-        str: The response from the Gemini API
-    """
-    try:
-        # Send a simple message without roles
-        response = genai.chat(messages=[message])  # Directly send the message text
-        return response["choices"][0]["message"]  # Extract the response message
-    except Exception as e:
-        return f"Error communicating with Gemini API: {e}"
 
 def app():
-    """Streamlit app for the Gemini Chatbot."""
-    st.title("Gemini Chatbot")
-    st.write("Ask me anything! Type your message below:")
+    st.title("🤖 Fitness Chatbot")
 
-    # Initialize chat history in session state
-    if "chat_history" not in st.session_state:
+    # Configure Gemini API
+    genai.configure(api_key="AIzaSyBb0yOnYLBoicKe8SEajKCeMxqqAzneyzI") 
+    model = genai.GenerativeModel('gemini-1.5-flash')
+
+    # Initialize chat history
+    if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
 
-    user_input = st.text_input("You:", placeholder="Type your message here...")
-    
-    if user_input:
-        # Get response from Gemini
-        response = call_gemini_api(user_input)
-        
-        # Add the current exchange to chat history
-        st.session_state.chat_history.append(("You", user_input))
-        st.session_state.chat_history.append(("Gemini", response))
+    # User input
+    user_input = st.text_input("Ask your fitness question (e.g., workout, diet, recovery):", "")
 
-        # Display full chat history
-        for role, message in st.session_state.chat_history:
-            st.write(f"{role}: {message}")
+    # Send button
+    if st.button("Send"):
+        if user_input.strip() != "":
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
 
-if __name__ == "__main__":
-    # Debug: Print working directory and credentials file location
-    print("Current Working Directory:", os.getcwd())
-    print("Google Credentials Path:", GOOGLE_CREDENTIALS_PATH)
-    app()
+            with st.spinner("Thinking..."):
+                try:
+                    response = model.generate_content(user_input)
+                    bot_reply = response.text.strip()
+                except Exception as e:
+                    bot_reply = f"❗ Error: {str(e)}"
+
+            st.session_state.chat_history.append({"role": "bot", "content": bot_reply})
+
+    # Display chat history
+    for chat in st.session_state.chat_history:
+        if chat["role"] == "user":
+            st.markdown(f"**You:** {chat['content']}")
+        else:
+            st.markdown(f"**CoachBot:** {chat['content']}")
+
+    # Option to clear chat
+    if st.button("Clear Chat"):
+        st.session_state.chat_history = []
